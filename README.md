@@ -1,4 +1,4 @@
-# Coalgebra_in_Lean
+# Coalgebra-in-Lean
 
 This project is part of a bachelor thesis on modeling coalgebra using Lean theorem prover.
  
