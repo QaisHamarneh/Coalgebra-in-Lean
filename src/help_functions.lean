@@ -42,12 +42,10 @@ noncomputable def graph_to_map
 
 def map_to_graph (f : A → B): set (A × B ):= λ r, r.2 = f r.1 
 
-def graph_fst (R : set (A × B )) : R → A := λ r , r.val.1
-def graph_snd (R : set (A × B )) : R → B := λ r , r.val.2
-
 
 lemma bij_map_to_graph_fst (f : A → B) :
-    bijective (graph_fst (map_to_graph f)) := 
+    let π₁ : (map_to_graph f) → A := λ r , r.val.1 in 
+    bijective π₁ := 
     begin
         let R : set (A × B) := map_to_graph f,
         let π₁ : R → A := λ r , r.val.1, 
@@ -160,7 +158,7 @@ lemma only_one {p q: A → Prop}
         exists.intro a₁ ⟨ h2 , h4⟩  
 
 
-lemma sub_range_if_surjective  (f: A ⟶ B) (g: B ⟶ C)
+lemma eq_range_if_surjective  (f: A ⟶ B) (g: B ⟶ C)
     (sur: surjective f) : range g = range (g ∘ f):= 
     calc range g = image g (univ)         : by simp
           ...    = image g (range f)      : by rw [range_iff_surjective.2 sur]
@@ -174,15 +172,14 @@ lemma sub_kern_if_injective {X Y Z U : Type u}
         begin
             assume x₁ x₂ xxe,
             have h01 : e x₁ = e x₂ := xxe,
-            show g x₁ = g x₂, from
-            have h02 : f (e x₁) = f (e x₂) := by rw [h01],
-            have h03 : (e ≫ f) x₁ = (e ≫ f) x₂ := by simp[h02],
-            have h04 : (g ≫ m) x₁ = (g ≫ m) x₂ :=  
-                h ▸ h03, --simp [h , h03] doesn't work
-            have h05 : (g ≫ m) = (m ∘ g) := rfl,
-            have h06 : (m ∘ g) x₁ = (m ∘ g) x₂ := 
-                h05 ▸ h04, -- simp [h05, h04] also doesn't work
-            inj h06 
+            have h02 : m (g x₁) = m (g x₂) := 
+            calc m (g x₁) = (g ≫ m) x₁    : rfl
+                   ...    = (e ≫ f) x₁    : by rw h
+                   ...    = f (e x₁)       : rfl
+                   ...    = f (e x₂)       : by rw h01
+                   ...    = (e ≫ f) x₂    : rfl
+                   ...    = (g ≫ m) x₂    : by rw h,
+            exact inj h02
         end
 
 

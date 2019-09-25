@@ -142,51 +142,39 @@ begin
     have sur : surjective e := (epi_iff_surjective e).1 ep,
     have inj : injective m  := (mono_iff_injective m).1 mo,
 
-    have diagram_sur : _ := diagram_surjective e g sur,
-    have diagram_inj : _ := diagram_injective m f inj,
-
-    have range_e :  univ = range e :=eq.symm (iff.elim_right 
-                                                range_iff_surjective sur),
-    have range_f : range f = image f univ := by simp,
-    have range_ef: range (f ⊚ e) = range f := 
-        eq.symm (sub_range_if_surjective e f sur),
-
-    have range_ef_gm : range (f ⊚ e) = range (m ⊚ g) :=
-            eq.subst h rfl,
-    have range_f_gm : range f = range (m ⊚ g) := 
-            eq.subst range_ef range_ef_gm,
-    have range_m_gm : range (m ⊚ g) ⊆ range m := 
-        range_comp_subset_range g m,
     have range_f_m : range f ⊆ range m := 
-        eq.subst (eq.symm range_f_gm) range_m_gm,
+        calc range f = range (f ⊚ e)    : eq_range_if_surjective e f sur
+                ...  = range (m ⊚ g)    : by rw h
+                ...  ⊆ range m           : range_comp_subset_range g m,
 
     have kern_e_g : sub_kern e g := 
         sub_kern_if_injective e f g m h inj, 
 
-    cases (diagram_inj.2 range_f_m) with d₁ ex_uni1,
-    cases (diagram_sur.2 kern_e_g)  with d₂ ex_uni2,
+    cases ((diagram_injective m f inj).2 range_f_m) with d₁ ex_uni1,
+    cases ((diagram_surjective e g sur).2 kern_e_g)  with d₂ ex_uni2,
 
     have ex1 : m ∘ d₁ = f := ex_uni1.1,
     have ex2 : d₂ ∘ e = g := ex_uni2.1,
 
     have uni1 : ∀ d : Y ⟶ Z,  m ∘ d = f → d = d₁ := ex_uni1.2,
-    have uni2 : ∀ d : Y ⟶ Z,  d ∘ e = g → d = d₂ := ex_uni2.2,
 
-    have lemma_21_mono : _ := (commutative_triangles e f g m h d₁),
+    have em_mono : _ := (commutative_triangles e f g m h d₁),
+
     have h1 : (∀ (d₁₁ : Y ⟶ Z), f = m ⊚ d₁₁ → d₁₁ = d₁)
                      ∧ g = d₁ ⊚ e := 
-        and.right lemma_21_mono ⟨mo , eq.symm ex1⟩,
+
+        and.right em_mono ⟨mo , eq.symm ex1⟩,
     have h2 : ∀ (d₁₁  : Y ⟶ Z), f = m ⊚ d₁₁ → d₁₁ = d₁ :=
         assume d₁₁, and.left h1 d₁₁,
 
-    have lemma_21_epi : _ := (commutative_triangles e f g m h d₂),
-    have h3 : _ := 
-        and.left lemma_21_epi ⟨ep ,eq.symm ex2⟩,
+    have em_epi := 
+        (commutative_triangles e f g m h d₂).1 ⟨ep ,eq.symm ex2⟩,
+
     have h4 : ∀ (d₁₁  : Y ⟶ Z), g =  d₁₁ ⊚ e → d₁₁ = d₂ :=
-        assume d₁₁, and.left h3 d₁₁,
+        assume d₁₁, and.left em_epi d₁₁,
     
     have d11 : g = d₁ ⊚ e := and.right h1,
-    have d22 : f = m ⊚ d₂ := and.right h3,
+    have d22 : f = m ⊚ d₂ := and.right em_epi,
 
     have d1_d2 : d₂ = d₁ := and.left h1 d₂ d22,
     have d12 : f = m ⊚ d₁ := eq.subst d1_d2 d22,
@@ -195,6 +183,7 @@ begin
             (g = dₓ ⊚ e ∧ f = m ⊚ dₓ) → dₓ = d₁ := 
             assume dₓ ged_fdm,
             uni1 dₓ (eq.symm ged_fdm.2),
+
     exact exists_unique.intro d₁ ⟨d11 , d12⟩ h5
 end
 

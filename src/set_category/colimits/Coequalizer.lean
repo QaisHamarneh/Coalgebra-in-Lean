@@ -31,12 +31,6 @@ def is_coequalizer {X : Type u} [category X]
     q ⊚ f = q ⊚ g → 
     ∃! h : C ⟶ Q , h ⊚ c = q
 
--- def is_coequalizer (c : B → C) : Prop :=
---     c ∘ f = c ∘ g ∧ 
---     Π (Q : Type u) (q : B → Q),
---     q ∘ f = q ∘ g → 
---     ∃! h : C → Q , h ∘ c = q
-
 
 variables {A B C : Type u}
 variables (f g : A ⟶ B)
@@ -52,8 +46,7 @@ definition theta := quotient (Θ_setoid f g)
 
 local notation `⟦`:max a `⟧`:0 := @quotient.mk B (Θ_setoid f g) a
 
-definition coequalizer : B → (theta f g) := λ b, ⟦b⟧
---quot.mk (Θ f g)
+definition coequalizer : B → theta f g := λ b, ⟦b⟧
 
 
 
@@ -80,22 +73,26 @@ lemma coequalizer_kern :
             b₁ b₂ 
             quotb1b2,
         apply eqv_gen.rec_on Θb1b2,
-        -- rel i.e. ∀ (x y : B), R f g x y → ker_q x y
+
         exact (λ b₁ b₂ (h: ∃ a : A , f a = b₁ ∧ g a = b₂), 
             let a : A := some h in
-            have fga : f a = b₁ ∧ g a = b₂ := some_spec h,
-            have qfga : (q ∘ f) a = (q ∘ g) a := by simp[qfg],
-            have qb1 : q b₁ = (q ∘ f) a :=by simp [fga],
-            have qb2 : q b₂ = (q ∘ g) a :=by simp [fga],
-            have qb1b2 :q b₁ = q b₂ := by simp [qb1 , qb2 , qfga], 
-            qb1b2),
+            have fa_ga : f a = b₁ ∧ g a = b₂ := some_spec h,
+
+            calc q b₁ = (q ∘ f) a       : by simp [some_spec h]
+                  ... = (q ∘ g) a       : by simp [qfg]
+                  ... = q b₂            : by simp [some_spec h]
+            ),
+
         -- refl : ∀ (x : B), ker_q x x
         exact (λ x, rfl),
+
         -- symm : ∀ (x y : B), eqv_gen (R f g) x y → ker_q x y → ker_q y x
         exact (λ x y _ (h : q x = q y), eq.symm h),
+
         -- trans :∀ (x y z : B), 
         --    eqv_gen (R f g) x y → eqv_gen (R f g) y z → 
         --         ker_q x y → ker_q y z → ker_q x z
+
         exact (λ x y z _ _ (h₁ : q x = q y) (h₂ : q y = q z), eq.trans h₁ h₂),
     
     end

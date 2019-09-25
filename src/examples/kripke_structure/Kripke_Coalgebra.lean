@@ -81,10 +81,11 @@ lemma Kripke_Coalgebra_hom {K₁ K₂ : Kripke φ} (ϕ : K₁ → K₂):
         have im : image ϕ (K₁.T x) = K₂.T (ϕ x) := 
             eq_sets.1 im_elem,
         
-        have F_ϕ : F.map ϕ (𝕂₁.α x) = ⟨image ϕ (K₁.T x), K₁.v x⟩ := rfl,
+        have F_ϕ : F.map ϕ (𝕂₁.α x) = ⟨image ϕ (K₁.T x), K₁.v x⟩ 
+                := rfl,
         simp [F_ϕ],
-        have last : (⟨K₂.T (ϕ x) , K₂.v (ϕ x)⟩ : (set K₂.State) × set φ) = 
-                        ⟨image ϕ (K₁.T x), K₁.v x⟩ := 
+        have last : (⟨K₂.T (ϕ x) , K₂.v (ϕ x)⟩ : 
+            (set K₂.State) × set φ) = ⟨image ϕ (K₁.T x), K₁.v x⟩ := 
                 by simp [eq.symm im, eq.symm (pr x)],
         simp [eq.symm last],
         refl
@@ -101,10 +102,12 @@ lemma Kripke_Coalgebra_hom {K₁ K₂ : Kripke φ} (ϕ : K₁ → K₂):
        
         have h3 : (𝕂₂.α ∘ ϕ) a₁ = ((F.map ϕ) ∘ 𝕂₁.α) a₁ 
                      := by rw co_hom,
-        have h5 : (⟨K₂.T (ϕ a₁) , K₂.v (ϕ a₁)⟩ : (set K₂.State) × set φ) = 
-                        ⟨image ϕ (K₁.T a₁), K₁.v a₁⟩ := h3,
+        have h5 : (⟨K₂.T (ϕ a₁) , K₂.v (ϕ a₁)⟩ : 
+            (set K₂.State) × set φ) = ⟨image ϕ (K₁.T a₁), K₁.v a₁⟩ 
+                := h3,
         have h6 : K₂.T (ϕ a₁) = image ϕ (K₁.T a₁) := by tidy,
-        have h7 : ϕ a₂ ∈ image ϕ (K₁.T a₁) := by {use a₂, simp [a₂_a₁]},
+        have h7 : ϕ a₂ ∈ image ϕ (K₁.T a₁) := 
+            by {use a₂, simp [a₂_a₁]},
         rw h6,
         exact h7,
 
@@ -114,16 +117,18 @@ lemma Kripke_Coalgebra_hom {K₁ K₂ : Kripke φ} (ϕ : K₁ → K₂):
                      := by rw co_hom,
         have h4 : 𝕂₂.α (ϕ a₁) = F.map ϕ (𝕂₁.α a₁) 
                      := h3,
-        have h5 : (⟨K₂.T (ϕ a₁) , K₂.v (ϕ a₁)⟩ : (set K₂.State) × set φ) = 
-                        ⟨image ϕ (K₁.T a₁), K₁.v a₁⟩ := h4,
+        have h5 : (⟨K₂.T (ϕ a₁) , K₂.v (ϕ a₁)⟩ : 
+            (set K₂.State) × set φ) = ⟨image ϕ (K₁.T a₁), K₁.v a₁⟩ 
+                := h4,
         have h6 : K₂.T (ϕ a₁) = image ϕ (K₁.T a₁) := by tidy,
         have h7 : b ∈ image ϕ (K₁.T a₁) := h6 ▸ b_T_ϕ_a,
         exact h7,
         intro a₁,
         have h3 : (𝕂₂.α ∘ ϕ) a₁ = ((F.map ϕ) ∘ 𝕂₁.α) a₁ 
                      := by rw co_hom,
-        have h5 : (⟨K₂.T (ϕ a₁) , K₂.v (ϕ a₁)⟩ : (set K₂.State) × set φ) = 
-                        ⟨image ϕ (K₁.T a₁), K₁.v a₁⟩ := h3,
+        have h5 : (⟨K₂.T (ϕ a₁) , K₂.v (ϕ a₁)⟩ : 
+            (set K₂.State) × set φ) = ⟨image ϕ (K₁.T a₁), K₁.v a₁⟩ 
+                := h3,
         have h6 : K₂.v (ϕ a₁) = K₁.v a₁ := by tidy,
         exact eq.symm h6
     end)
